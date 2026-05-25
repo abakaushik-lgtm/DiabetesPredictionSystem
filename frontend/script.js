@@ -87,6 +87,9 @@ const INTERFACE_TEXTS = {
 let currentTheme = 'clinical';
 let summaryDataCached = null;
 
+// Determine API base dynamically based on protocol
+const API_BASE = window.location.protocol.startsWith('file') ? 'http://127.0.0.1:8000' : '';
+
 // Initialize Dashboard
 document.addEventListener('DOMContentLoaded', () => {
   // Sync form initial label markers
@@ -189,7 +192,7 @@ function toggleDashboardMode(mode) {
 // Fetch Backend Status (/status)
 async function fetchSystemStatus() {
   try {
-    const response = await fetch('http://127.0.0.1:8000/status');
+    const response = await fetch(`${API_BASE}/status`);
     if (!response.ok) throw new Error();
     const data = await response.json();
     
@@ -208,7 +211,7 @@ async function fetchSystemStatus() {
 // Fetch Backend Summary telemetry (/summary)
 async function fetchSummaryTelemetry() {
   try {
-    const response = await fetch('http://127.0.0.1:8000/summary');
+    const response = await fetch(`${API_BASE}/summary`);
     if (!response.ok) return;
     const data = await response.json();
     summaryDataCached = data;
@@ -240,7 +243,11 @@ predictionForm.addEventListener('submit', async (event) => {
   try {
     output.textContent = currentTheme === 'quantum' ? '⏳ Handshaking quantum nodes...' : '⏳ Compiling medical records...';
     
-    const response = await fetch('http://127.0.0.1:8000/predict', {
+    // Reset gauge fill
+    const circle = document.querySelector('.gauge-fill');
+    if (circle) circle.style.strokeDashoffset = '440';
+    
+    const response = await fetch(`${API_BASE}/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -251,6 +258,7 @@ predictionForm.addEventListener('submit', async (event) => {
     if (!response.ok) {
       const error = await response.json();
       output.textContent = `❌ Error: ${error.detail ?? response.statusText}`;
+      if (circle) circle.style.strokeDashoffset = '440';
       return;
     }
 
@@ -263,22 +271,37 @@ predictionForm.addEventListener('submit', async (event) => {
     
   } catch (err) {
     output.textContent = `⚠️ Network error: ${err.message}`;
+    const circle = document.querySelector('.gauge-fill');
+    if (circle) circle.style.strokeDashoffset = '440';
   }
 });
 
 function renderPredictionResult(rawVal) {
   const textMap = INTERFACE_TEXTS[currentTheme];
   document.getElementById('result-desc').textContent = textMap.resultDesc;
+  const circle = document.querySelector('.gauge-fill');
+  let percent = 0;
   
   if (currentTheme === 'quantum') {
     output.textContent = `🔮 ${rawVal.toFixed(4)} GHz`;
     output.style.color = '#38bdf8';
+    
+    // Map frequency (approx 5 to 45) to gauge percent
+    percent = Math.min(100, Math.max(0, ((rawVal - 5) / 40) * 100));
   } else {
     // scale frequency nicely to map to a diabetic risk percentage
     // typically raw values hover around 15-35. Let's map 10 to 10% and 40 to 95%
     let scaledRisk = Math.min(99.9, Math.max(1.0, ((rawVal - 8) / 32) * 100));
     output.textContent = `📊 Risk: ${scaledRisk.toFixed(2)}%`;
     output.style.color = scaledRisk > 60 ? '#ef4444' : (scaledRisk > 30 ? '#f59e0b' : '#10b981');
+    
+    percent = scaledRisk;
+  }
+  
+  // Set SVG Gauge fill offset
+  if (circle) {
+    const offset = 440 - (440 * percent) / 100;
+    circle.style.strokeDashoffset = offset;
   }
 }
 
@@ -323,7 +346,7 @@ async function fetchDeploymentRecommendations(gravity) {
   clearTimeout(deployTimeout);
   deployTimeout = setTimeout(async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/deploy?gravity=${gravity}`);
+      const response = await fetch(`${API_BASE}/deploy?gravity=${gravity}`);
       if (!response.ok) return;
       const data = await response.json();
       

@@ -7,7 +7,7 @@ from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, Form, HTTPException, Query
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
@@ -157,6 +157,11 @@ def deploy_anti_gravity_adjustment(gravity_value: float) -> Dict[str, float]:
         "recommended_spin_coherence": round(min(100.0, 80.0 + 0.15 * (100 - gravity_value)), 3),
         "recommended_particle_density": round(max(0.1, 10.0 + 0.2 * gravity_value), 3),
     }
+
+
+@app.get("/")
+async def root_redirect():
+    return RedirectResponse(url="/login")
 
 
 @app.get("/index.html", response_class=HTMLResponse)
