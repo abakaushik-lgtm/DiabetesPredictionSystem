@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aether Analytics - Core Console</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="clinical-mode">
+
+  <!-- Interactive Canvas Particle Grid (Renders floating neon nodes in Quantum mode) -->
+  <canvas id="canvas-particles"></canvas>
+
+  <main>
+    
+    <!-- SYSTEM HEADER -->
+    <header class="panel span-full dashboard-header">
+      <div class="title-area">
+        <div class="system-logo" id="system-logo">🏥</div>
+        <div class="title-text-group">
+          <h1 id="dashboard-title">Clinical Telemetry System</h1>
+          <p id="dashboard-subtitle">Aether Medical AI Core Diagnostics</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- Interactive Node Connection Status -->
+        <div class="system-status">
+          <span class="status-dot"></span>
+          <span id="status-text">Connecting...</span>
+        </div>
+        
+        <!-- Physical Toggling Pill Switch -->
+        <div class="toggle-pill">
+          <div class="slider"></div>
+          <button type="button" class="toggle-btn active" id="toggle-clinical" onclick="toggleDashboardMode('clinical')">Clinical Cover</button>
+          <button type="button" class="toggle-btn" id="toggle-quantum" onclick="toggleDashboardMode('quantum')">Quantum Core</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- LEFT COLUMN: DIAGNOSTIC FORM CONFIGURATION -->
+    <section class="panel diagnostics-panel">
+      <h2 id="config-title">📋 Clinical Diagnostics Form</h2>
+      
+      <form id="prediction-form" class="grid-form">
+        
+        <!-- Input 1 -->
+        <div class="form-field">
+          <label for="electromagnetic_field_intensity">
+            <span id="label-intensity">🩸 Fasting Blood Glucose</span>
+            <span class="field-hint-value" id="val-intensity">7.5</span>
+          </label>
+          <input type="number" id="electromagnetic_field_intensity" value="7.5" step="0.1" min="0" max="20" required oninput="updateValLabel(this)" />
+        </div>
+
+        <!-- Input 2 -->
+        <div class="form-field">
+          <label for="quantum_spin_coherence">
+            <span id="label-coherence">🧬 HbA1c Coherence Index</span>
+            <span class="field-hint-value" id="val-coherence">75.0</span>
+          </label>
+          <input type="number" id="quantum_spin_coherence" value="75" step="0.1" min="10" max="100" required oninput="updateValLabel(this)" />
+        </div>
+
+        <!-- Input 3 -->
+        <div class="form-field">
+          <label for="particle_density">
+            <span id="label-density">💉 Insulin Particle Density</span>
+            <span class="field-hint-value" id="val-density">8.0</span>
+          </label>
+          <input type="number" id="particle_density" value="8.0" step="0.1" min="0.1" max="35" required oninput="updateValLabel(this)" />
+        </div>
+
+        <!-- Input 4 -->
+        <div class="form-field">
+          <label for="local_gravitational_force">
+            <span id="label-gravity">⚖️ Body Mass Index (BMI)</span>
+            <span class="field-hint-value" id="val-gravity">9.81</span>
+          </label>
+          <input type="number" id="local_gravitational_force" value="9.81" step="0.01" min="0" max="20" required oninput="updateValLabel(this)" />
+        </div>
+
+        <!-- Input 5 -->
+        <div class="form-field span-2">
+          <label for="age">
+            <span id="label-age">🎂 Patient Age (Years)</span>
+            <span class="field-hint-value" id="val-age">45</span>
+          </label>
+          <input type="number" id="age" value="45" step="1" min="1" max="120" required oninput="updateValLabel(this)" />
+        </div>
+
+        <button type="submit" class="submit-btn span-2" id="submit-button">
+          <span>🚀 Run Diagnostics Check</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- RIGHT COLUMN: RESULTS, TELEMETRY, & HOVER STABILIZATION -->
+    <section class="flex-container">
+      
+      <!-- Prediction Results Card -->
+      <div class="panel result-display-card">
+        <div class="card-title-group">
+          <h3 id="result-title">📡 Diagnostics Telemetry</h3>
+        </div>
+        
+        <div class="gauge-ring-outer">
+          <pre id="prediction-output" class="console-output-text">Awaiting input data sequence...</pre>
+        </div>
+        
+        <div class="console-output-label" id="result-desc">Submit the diagnostics form to evaluate core output parameters</div>
+      </div>
+
+      <!-- Telemetry Dashboard (Summary statistics) -->
+      <div class="panel">
+        <h3 style="font-family: var(--font-heading); font-size: 1.1rem; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.03em;" id="summary-title">📈 System Database Summary</h3>
+        <div class="telemetry-dashboard">
+          <div class="telemetry-card">
+            <label id="sum-label-rows">Patient Cohort Size</label>
+            <span class="value" id="sum-val-rows">---</span>
+          </div>
+          <div class="telemetry-card">
+            <label id="sum-label-cols">Dataset Columns</label>
+            <span class="value" id="sum-val-cols">---</span>
+          </div>
+          <div class="telemetry-card">
+            <label id="sum-label-intensity">Mean Glucose Level</label>
+            <span class="value" id="sum-val-intensity">---</span>
+          </div>
+          <div class="telemetry-card">
+            <label id="sum-label-coherence">Mean HbA1c Coherence</label>
+            <span class="value" id="sum-val-coherence">---</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stabilization Engine Section (Calls `/deploy`) -->
+      <div class="panel deploy-controls-section" id="deploy-section">
+        <h3 id="deploy-title">🛠️ Antigravity Hover Stabilization</h3>
+        
+        <!-- Dynamic Preset Selectors -->
+        <div class="planet-presets">
+          <button type="button" class="preset-btn active" onclick="setGravityPreset(9.81, 'earth', this)">
+            <span class="icon">🌍</span>
+            <span>Earth</span>
+          </button>
+          <button type="button" class="preset-btn" onclick="setGravityPreset(3.71, 'mars', this)">
+            <span class="icon">🔴</span>
+            <span>Mars</span>
+          </button>
+          <button type="button" class="preset-btn" onclick="setGravityPreset(1.62, 'moon', this)">
+            <span class="icon">🌙</span>
+            <span>Moon</span>
+          </button>
+          <button type="button" class="preset-btn" onclick="setGravityPreset(0.00, 'zero', this)">
+            <span class="icon">🌌</span>
+            <span>Zero-G</span>
+          </button>
+        </div>
+
+        <!-- Custom Slider -->
+        <div class="slider-container">
+          <div class="slider-labels">
+            <span id="slider-label-text">Local Gravitational Target</span>
+            <span><span id="slider-current-val">9.81</span> m/s²</span>
+          </div>
+          <input type="range" class="gravity-slider" id="gravity-slider" min="0" max="20" step="0.01" value="9.81" oninput="handleSliderChange(this.value)" />
+        </div>
+
+        <!-- System Recommendations Indicators -->
+        <div class="recommendations-container">
+          <!-- Parameter 1 -->
+          <div class="rec-item">
+            <div class="rec-item-header">
+              <span id="rec-label-1">Recommended Insulin Flow</span>
+              <span class="rec-item-val" id="rec-val-1">---</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="rec-fill-1"></div>
+            </div>
+          </div>
+          
+          <!-- Parameter 2 -->
+          <div class="rec-item">
+            <div class="rec-item-header">
+              <span id="rec-label-2">Recommended Spin Coherence</span>
+              <span class="rec-item-val" id="rec-val-2">---</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="rec-fill-2"></div>
+            </div>
+          </div>
+
+          <!-- Parameter 3 -->
+          <div class="rec-item">
+            <div class="rec-item-header">
+              <span id="rec-label-3">Recommended Particle Density</span>
+              <span class="rec-item-val" id="rec-val-3">---</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="rec-fill-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Console Exit Pill -->
+    <div class="span-full back-link-wrapper">
+      <a href="/login" class="back-link">🔓 Lock Console & Log Out</a>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

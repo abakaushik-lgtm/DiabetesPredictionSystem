@@ -1,0 +1,807 @@
+/* ==========================================================================
+   Dual-Theme Sci-Fi & Clinical Design System CSS Overhaul
+   ========================================================================== */
+
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* Base Reset & Variables System */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s ease,
+              color 0.4s ease,
+              box-shadow 0.4s ease,
+              opacity 0.4s ease,
+              transform 0.3s ease;
+}
+
+:root {
+  /* Common System Properties */
+  --transition-speed: 0.4s;
+  
+  /* ==========================================
+     Clinical Cover Mode Colors (Teals / Blues)
+     ========================================== */
+  --bg-gradient: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 50%, #f5f3ff 100%);
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-border: rgba(45, 212, 191, 0.25);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-glow-color: rgba(13, 148, 136, 0.15);
+  
+  --accent-primary: #0d9488;
+  --accent-secondary: #0284c7;
+  --accent-gradient: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+  
+  --input-bg: #f8fafc;
+  --input-border: #cbd5e1;
+  --input-focus: #0d9488;
+  --input-focus-shadow: rgba(13, 148, 136, 0.15);
+  
+  --console-bg: #f1f5f9;
+  --console-border: #e2e8f0;
+  --console-text: #0f172a;
+  --console-accent: #0284c7;
+  
+  --font-heading: 'Inter', sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+  
+  --radar-scan-color: rgba(13, 148, 136, 0.03);
+  --grid-opacity: 0.04;
+  --badge-bg: #e0f2fe;
+  --badge-text: #0369a1;
+}
+
+body.quantum-mode {
+  /* ==========================================
+     Quantum Core Mode Colors (Neon Cyans / Purples)
+     ========================================== */
+  --bg-gradient: linear-gradient(135deg, #020617 0%, #0f172a 60%, #1e1b4b 100%);
+  --panel-bg: rgba(15, 23, 42, 0.7);
+  --panel-border: rgba(192, 132, 252, 0.22);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-glow-color: rgba(168, 85, 247, 0.4);
+  
+  --accent-primary: #c084fc;
+  --accent-secondary: #06b6d4;
+  --accent-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+  
+  --input-bg: rgba(30, 41, 59, 0.65);
+  --input-border: rgba(148, 163, 184, 0.2);
+  --input-focus: #c084fc;
+  --input-focus-shadow: rgba(168, 85, 247, 0.25);
+  
+  --console-bg: rgba(2, 6, 23, 0.85);
+  --console-border: rgba(168, 85, 247, 0.2);
+  --console-text: #38bdf8;
+  --console-accent: #c084fc;
+  
+  --font-heading: 'Orbitron', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --radar-scan-color: rgba(6, 182, 212, 0.06);
+  --grid-opacity: 0.12;
+  --badge-bg: rgba(168, 85, 247, 0.15);
+  --badge-text: #c084fc;
+}
+
+/* Base Body Styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Digital Grid Background Layer */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(90deg, transparent 24%, rgba(6, 182, 212, var(--grid-opacity)) 25%, rgba(6, 182, 212, var(--grid-opacity)) 26%, transparent 27%, transparent 74%, rgba(6, 182, 212, var(--grid-opacity)) 75%, rgba(6, 182, 212, var(--grid-opacity)) 76%, transparent 77%, transparent),
+    linear-gradient(0deg, transparent 24%, rgba(6, 182, 212, var(--grid-opacity)) 25%, rgba(6, 182, 212, var(--grid-opacity)) 26%, transparent 27%, transparent 74%, rgba(6, 182, 212, var(--grid-opacity)) 75%, rgba(6, 182, 212, var(--grid-opacity)) 76%, transparent 77%, transparent);
+  background-size: 60px 60px;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* High-Tech Oscillating Scanline Sweep */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  background: linear-gradient(to bottom, var(--radar-scan-color), transparent);
+  z-index: 999;
+  pointer-events: none;
+  animation: radar-sweep 8s linear infinite;
+}
+
+@keyframes radar-sweep {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* Floating Particles (Canvas Container) */
+#canvas-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Main Application Dashboard Structure
+   ========================================================================== */
+
+main {
+  max-width: 1200px;
+  margin: 30px auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 30px;
+  position: relative;
+  z-index: 10;
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Glassmorphism Panel Component */
+.panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-border);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+body.quantum-mode .panel {
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.15);
+}
+
+/* Spans full width when desired */
+.span-full {
+  grid-column: 1 / -1;
+}
+
+/* ==========================================================================
+   Header Component
+   ========================================================================== */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.title-area {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.system-logo {
+  font-size: 2.8rem;
+  animation: pulse-ring 2s infinite ease-in-out;
+}
+
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.05) rotate(3deg); }
+}
+
+.title-text-group h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.quantum-mode .title-text-group h1 {
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+}
+
+.title-text-group p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Header Controls (Modes / Back to Login) */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: currentColor;
+  border-radius: 50%;
+  animation: ping 1.5s infinite;
+}
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Mode Switch Toggle Pill */
+.toggle-pill {
+  display: flex;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 3px;
+  border-radius: 9999px;
+  position: relative;
+  width: 250px;
+}
+
+body.quantum-mode .toggle-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 9999px;
+  z-index: 2;
+  text-transform: uppercase;
+}
+
+.toggle-pill .slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  background: var(--accent-gradient);
+  border-radius: 9999px;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+body.quantum-mode .toggle-pill .slider {
+  transform: translateX(100%);
+}
+
+.toggle-btn.active {
+  color: white;
+}
+
+/* ==========================================================================
+   Left Column: Diagnostic Form Configuration
+   ========================================================================== */
+
+.diagnostics-panel h2 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid var(--panel-border);
+  padding-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+form.grid-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+form.grid-form .span-2 {
+  grid-column: span 2;
+}
+
+/* Individual Field Controls */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field-hint-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent-primary);
+  background: rgba(0, 0, 0, 0.03);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-border);
+}
+
+body.quantum-mode .field-hint-value {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* High-tech Numeric Inputs */
+input[type="number"] {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  outline: none;
+  font-family: var(--font-mono);
+}
+
+input[type="number"]:focus {
+  border-color: var(--input-focus);
+  background-color: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow);
+}
+
+body:not(.quantum-mode) input[type="number"]:focus {
+  background-color: #fafdfb;
+}
+
+/* Submit Button & Glow Animation */
+.submit-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  background: var(--accent-gradient);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--shadow-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: none;
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  40%, 100% { left: 100%; }
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px var(--shadow-color);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Right Column: Telemetry, Prediction & Deploy Panels
+   ========================================================================== */
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Live Telemetry Results Card */
+.result-display-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 24px;
+  background: var(--console-bg);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+body.quantum-mode .result-display-card {
+  border-color: var(--console-border);
+  box-shadow: inset 0 0 15px rgba(2, 6, 23, 0.6);
+}
+
+.card-title-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title-group h3 {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.gauge-ring-outer {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+}
+
+/* Output Console Text */
+.console-output-text {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--console-text);
+  letter-spacing: -0.01em;
+  text-align: center;
+  z-index: 2;
+  text-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+}
+
+body.quantum-mode .console-output-text {
+  font-size: 2.1rem;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+}
+
+.console-output-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* Telemetry Grid (Summary Endpoint) */
+.telemetry-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.telemetry-card {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--panel-border);
+  padding: 14px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+body.quantum-mode .telemetry-card {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.telemetry-card label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.telemetry-card .value {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+/* ==========================================================================
+   Deploy Stabilization Engine Section
+   ========================================================================== */
+
+.deploy-controls-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Planet Preset Selectors */
+.planet-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.preset-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--panel-border);
+  padding: 10px 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+}
+
+body.quantum-mode .preset-btn {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.preset-btn:hover {
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  transform: translateY(-1px);
+}
+
+.preset-btn.active {
+  background: var(--accent-gradient);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.preset-btn .icon {
+  font-size: 1.25rem;
+}
+
+/* Custom Interactive Gravity Slider */
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.slider-container .slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.gravity-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--console-bg);
+  outline: none;
+  border: 1px solid var(--panel-border);
+}
+
+.gravity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--shadow-color);
+  border: 2px solid white;
+}
+
+.gravity-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--shadow-color);
+  border: 2px solid white;
+}
+
+/* Recommendations Layout */
+.recommendations-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--console-bg);
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid var(--panel-border);
+}
+
+body.quantum-mode .recommendations-container {
+  border-color: var(--console-border);
+}
+
+.rec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rec-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.rec-item-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+/* Progress bar filling container */
+.bar-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+body.quantum-mode .bar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  width: 0%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Back Link Style */
+.back-link-wrapper {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.back-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+}
+
+.back-link:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Responsive media queries
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  main {
+    margin: 15px auto;
+  }
+  
+  form.grid-form {
+    grid-template-columns: 1fr;
+  }
+  
+  form.grid-form .span-2 {
+    grid-column: span 1;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .toggle-pill {
+    width: 100%;
+  }
+  
+  .planet-presets {
+    grid-template-columns: 1fr 1fr;
+  }
+}

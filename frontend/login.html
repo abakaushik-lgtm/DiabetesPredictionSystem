@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aether Systems - Portal Login</title>
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Base Reset and Transitions */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                  border-color 0.4s ease, 
+                  color 0.4s ease, 
+                  box-shadow 0.4s ease, 
+                  transform 0.3s ease;
+    }
+
+    :root {
+      /* Clinical Mode variables */
+      --bg-gradient: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 50%, #f5f3ff 100%);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(45, 212, 191, 0.3);
+      --text-main: #0f172a;
+      --text-sub: #0d9488;
+      --accent-gradient: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+      --shadow-color: rgba(13, 148, 136, 0.15);
+      --glow-glow: 0 8px 32px var(--shadow-color);
+      --input-bg: #f8fafc;
+      --input-border: #cbd5e1;
+      --font-title: 'Inter', sans-serif;
+      --grid-opacity: 0.05;
+    }
+
+    body.quantum-mode {
+      /* Quantum Mode variables */
+      --bg-gradient: linear-gradient(135deg, #020617 0%, #0f172a 60%, #1e1b4b 100%);
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(192, 132, 252, 0.25);
+      --text-main: #f8fafc;
+      --text-sub: #a855f7;
+      --accent-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+      --shadow-color: rgba(168, 85, 247, 0.3);
+      --glow-glow: 0 0 25px var(--shadow-color), inset 0 0 15px rgba(6, 182, 212, 0.1);
+      --input-bg: rgba(30, 41, 59, 0.6);
+      --input-border: rgba(148, 163, 184, 0.2);
+      --font-title: 'Orbitron', sans-serif;
+      --grid-opacity: 0.12;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      color: var(--text-main);
+    }
+
+    /* Grid Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(90deg, transparent 24%, rgba(6, 182, 212, var(--grid-opacity)) 25%, rgba(6, 182, 212, var(--grid-opacity)) 26%, transparent 27%, transparent 74%, rgba(6, 182, 212, var(--grid-opacity)) 75%, rgba(6, 182, 212, var(--grid-opacity)) 76%, transparent 77%, transparent),
+        linear-gradient(0deg, transparent 24%, rgba(6, 182, 212, var(--grid-opacity)) 25%, rgba(6, 182, 212, var(--grid-opacity)) 26%, transparent 27%, transparent 74%, rgba(6, 182, 212, var(--grid-opacity)) 75%, rgba(6, 182, 212, var(--grid-opacity)) 76%, transparent 77%, transparent);
+      background-size: 60px 60px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Animated Radial Spotlights */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(13, 148, 136, 0.08) 0%, transparent 40%), 
+                  radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Floating Background Emojis */
+    .bg-icon-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-icon {
+      position: absolute;
+      font-size: 2.2rem;
+      opacity: 0.07;
+      user-select: none;
+      animation: float 6s ease-in-out infinite;
+      filter: grayscale(20%);
+    }
+
+    body.quantum-mode .floating-icon {
+      opacity: 0.15;
+      filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6)) brightness(1.2);
+    }
+
+    .icon-1 { top: 12%; left: 8%; animation-delay: 0s; }
+    .icon-2 { top: 22%; right: 10%; animation-delay: 1s; }
+    .icon-3 { top: 58%; left: 7%; animation-delay: 2s; }
+    .icon-4 { top: 75%; right: 8%; animation-delay: 3s; }
+    .icon-5 { top: 42%; right: 18%; animation-delay: 1.5s; }
+    .icon-6 { top: 28%; left: 19%; animation-delay: 2.5s; }
+    .icon-7 { bottom: 12%; left: 22%; animation-delay: 0.5s; }
+    .icon-8 { bottom: 18%; right: 22%; animation-delay: 3.5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    /* Glassmorphic Container */
+    .login-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--glow-glow);
+      width: 100%;
+      max-width: 440px;
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      z-index: 10;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Mode Switcher Toggle */
+    .mode-switch-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .mode-switch {
+      display: flex;
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 4px;
+      border-radius: 9999px;
+      position: relative;
+      width: 100%;
+    }
+
+    body.quantum-mode .mode-switch {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .mode-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      border-radius: 9999px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .mode-switch .slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      background: var(--accent-gradient);
+      border-radius: 9999px;
+      z-index: 1;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    body.quantum-mode .mode-switch .slider {
+      transform: translateX(100%);
+    }
+
+    .mode-btn span {
+      opacity: 0.7;
+    }
+
+    .mode-btn.active span {
+      opacity: 1;
+      color: white;
+    }
+
+    /* Logo & Headings */
+    .logo-section {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo-badge {
+      font-size: 3.2rem;
+      display: inline-block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    h1 {
+      font-family: var(--font-title);
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    body.quantum-mode h1 {
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+    }
+
+    .subtitle {
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* Form Fields */
+    form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: var(--input-bg);
+      color: var(--text-main);
+      outline: none;
+      font-family: inherit;
+    }
+
+    body.quantum-mode input[type="text"],
+    body.quantum-mode input[type="password"] {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: rgba(168, 85, 247, 0.5);
+      background-color: rgba(255, 255, 255, 0.02);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+    }
+
+    body:not(.quantum-mode) input[type="text"]:focus,
+    body:not(.quantum-mode) input[type="password"]:focus {
+      border-color: #0d9488;
+      background-color: #f0fdfa;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+    }
+
+    /* Primary Submit Button */
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: var(--accent-gradient);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--shadow-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--shadow-color);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    /* Messaging Banner */
+    .message {
+      margin-top: 14px;
+      min-height: 24px;
+      text-align: center;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    /* Demo Credentials Alert Card */
+    .credentials-card {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px dashed rgba(13, 148, 136, 0.2);
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 24px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    body.quantum-mode .credentials-card {
+      background: rgba(15, 23, 42, 0.4);
+      border-color: rgba(168, 85, 247, 0.25);
+    }
+
+    .credentials-card strong {
+      color: var(--text-sub);
+    }
+
+    .credentials-card div {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .credentials-card code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #b45309;
+    }
+
+    body.quantum-mode .credentials-card code {
+      background: rgba(255, 255, 255, 0.05);
+      color: #38bdf8;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body class="clinical-mode">
+
+  <!-- Floating animated background objects layer -->
+  <div class="bg-icon-layer" id="bg-icons">
+    <div class="floating-icon icon-1">💊</div>
+    <div class="floating-icon icon-2">🏥</div>
+    <div class="floating-icon icon-3">📋</div>
+    <div class="floating-icon icon-4">🩺</div>
+    <div class="floating-icon icon-5">💉</div>
+    <div class="floating-icon icon-6">🧬</div>
+    <div class="floating-icon icon-7">💓</div>
+    <div class="floating-icon icon-8">📊</div>
+  </div>
+
+  <div class="login-container">
+    
+    <!-- Visual Theme Switcher -->
+    <div class="mode-switch-wrapper">
+      <div class="mode-switch">
+        <div class="slider"></div>
+        <button type="button" class="mode-btn active" id="btn-clinical" onclick="switchTheme('clinical')">
+          <span id="label-clinical">🏥 Clinical Cover</span>
+        </button>
+        <button type="button" class="mode-btn" id="btn-quantum" onclick="switchTheme('quantum')">
+          <span id="label-quantum">⚛️ Quantum Core</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="logo-section">
+      <div class="logo-badge" id="logo-badge">🏥</div>
+      <h1 id="portal-title">Clinical Diagnostics System</h1>
+      <p class="subtitle" id="portal-subtitle">Aether Medical Analytics Portal</p>
+    </div>
+
+    <!-- Form Section -->
+    <form id="login-form">
+      <div class="field-group">
+        <label for="username" id="label-user">👤 Access Username</label>
+        <input type="text" id="username" placeholder="e.g. admin" value="admin" required autocomplete="username" />
+      </div>
+
+      <div class="field-group">
+        <label for="password" id="label-pass">🔑 Security Password</label>
+        <input type="password" id="password" placeholder="••••••••" value="password123" required autocomplete="current-password" />
+      </div>
+
+      <button type="submit" id="btn-login-text">
+        <span>🚀 Authenticate & Decrypt</span>
+      </button>
+    </form>
+
+    <!-- Messaging Console -->
+    <div class="message" id="message"></div>
+
+    <!-- Interactive Credentials Hint -->
+    <div class="credentials-card">
+      <div>
+        <strong>🔑 System Access Key:</strong>
+      </div>
+      <div>
+        <span>User ID: <code>admin</code></span>
+        <span>Passphrase: <code>password123</code></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mode config constants
+    const EMOJIS = {
+      clinical: ['💊', '🏥', '📋', '🩺', '💉', '🧬', '💓', '📊'],
+      quantum: ['⚛️', '🚀', '🌀', '🔋', '📡', '🛰️', '🛸', '⚡']
+    };
+
+    const TEXTS = {
+      clinical: {
+        title: 'Clinical Diagnostics System',
+        subtitle: 'Aether Medical Analytics Portal',
+        logo: '🏥',
+        user: '👤 Access Username',
+        pass: '🔑 Security Password',
+        btn: '🚀 Authenticate & Decrypt'
+      },
+      quantum: {
+        title: 'Q.E.M.A.D. Core Control',
+        subtitle: 'Quantum Antigravity Drive Terminal',
+        logo: '⚛️',
+        user: '📟 Operator Identifier',
+        pass: '🔑 Quantum Encryption Key',
+        btn: '⚡ Establish Core Link'
+      }
+    };
+
+    let activeTheme = 'clinical';
+
+    // Soft theme switches
+    function switchTheme(theme) {
+      if (theme === activeTheme) return;
+      activeTheme = theme;
+
+      const body = document.body;
+      const logoBadge = document.getElementById('logo-badge');
+      const title = document.getElementById('portal-title');
+      const subtitle = document.getElementById('portal-subtitle');
+      const labelUser = document.getElementById('label-user');
+      const labelPass = document.getElementById('label-pass');
+      const btnText = document.querySelector('#btn-login-text span');
+      const bgIcons = document.querySelectorAll('.floating-icon');
+      const btnClinical = document.getElementById('btn-clinical');
+      const btnQuantum = document.getElementById('btn-quantum');
+
+      // Update classes
+      if (theme === 'quantum') {
+        body.classList.remove('clinical-mode');
+        body.classList.add('quantum-mode');
+        btnClinical.classList.remove('active');
+        btnQuantum.classList.add('active');
+      } else {
+        body.classList.remove('quantum-mode');
+        body.classList.add('clinical-mode');
+        btnQuantum.classList.remove('active');
+        btnClinical.classList.add('active');
+      }
+
+      // Add smooth text morphs
+      logoBadge.style.transform = 'scale(0) rotate(180deg)';
+      setTimeout(() => {
+        logoBadge.textContent = TEXTS[theme].logo;
+        logoBadge.style.transform = 'scale(1) rotate(0deg)';
+      }, 250);
+
+      title.textContent = TEXTS[theme].title;
+      subtitle.textContent = TEXTS[theme].subtitle;
+      labelUser.innerHTML = TEXTS[theme].user;
+      labelPass.innerHTML = TEXTS[theme].pass;
+      btnText.textContent = TEXTS[theme].btn;
+
+      // Update background floating emojis
+      bgIcons.forEach((el, index) => {
+        el.style.transform = 'scale(0)';
+        setTimeout(() => {
+          el.textContent = EMOJIS[theme][index];
+          el.style.transform = 'scale(1)';
+        }, 200 + index * 50);
+      });
+    }
+
+    // Initialize floating icon states
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set active default state or check storage if necessary
+      const savedTheme = localStorage.getItem('app-theme');
+      if (savedTheme === 'quantum') {
+        switchTheme('quantum');
+      }
+    });
+
+    // Form Submission & API Request
+    const form = document.getElementById('login-form');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        message.style.display = 'block';
+        message.textContent = activeTheme === 'quantum' ? '⏳ Handshaking quantum nodes...' : '⏳ Authenticating credentials...';
+        
+        if (activeTheme === 'quantum') {
+          message.style.color = '#c084fc';
+          message.style.background = 'rgba(168, 85, 247, 0.1)';
+        } else {
+          message.style.color = '#0d9488';
+          message.style.background = '#f0fdfa';
+        }
+
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ username, password }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          message.textContent = `❌ ${error.detail}`;
+          message.style.color = '#ef4444';
+          message.style.background = activeTheme === 'quantum' ? 'rgba(239, 68, 68, 0.1)' : '#fef2f2';
+          return;
+        }
+
+        const data = await response.json();
+        message.textContent = activeTheme === 'quantum' ? '✅ Link established. Decrypting logs...' : `✅ ${data.message}`;
+        message.style.color = activeTheme === 'quantum' ? '#22c55e' : '#16a34a';
+        message.style.background = activeTheme === 'quantum' ? 'rgba(34, 197, 94, 0.1)' : '#f0fdf4';
+        
+        // Save the chosen login mode so the main dashboard can match it on initial boot!
+        localStorage.setItem('app-theme', activeTheme);
+
+        setTimeout(() => {
+          window.location.href = '/index.html';
+        }, 1200);
+      } catch (err) {
+        message.textContent = `⚠️ Network error: ${err.message}`;
+        message.style.color = '#d97706';
+        message.style.background = activeTheme === 'quantum' ? 'rgba(217, 119, 6, 0.1)' : '#fffbeb';
+      }
+    });
+  </script>
+</body>
+</html>
